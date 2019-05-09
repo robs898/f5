@@ -1,0 +1,33 @@
+- name: DEPLOY AS3
+  hosts: localhost
+  connection: localhost
+  gather_facts: no
+  vars:
+    method: "GET"
+  vars_files:
+    - ./creds.yaml
+  tasks:
+  - name: Get info
+    uri:
+      url: https://18.130.90.35/mgmt/shared/appsvcs/info
+      method: "{{ method }}"
+      user: "{{ user }}"
+      password: "{{ passwd }}"
+      force_basic_auth: yes
+      status_code: 200
+      body_format: json
+      validate_certs: no
+    delegate_to: localhost
+  - name: Declare a virtual server
+    uri:
+      url: https://18.130.90.35/mgmt/shared/appsvcs/declare
+      method: POST
+      user: "{{ user }}"
+      password: "{{ passwd }}"
+      body: "{{ lookup('file','data.json') }}"
+      force_basic_auth: yes
+      status_code: 200
+      body_format: json
+      validate_certs: no
+    delegate_to: localhost
+
